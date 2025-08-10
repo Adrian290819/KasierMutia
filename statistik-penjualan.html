@@ -161,6 +161,12 @@
     const data = labels.map(tgl => penjualanPerHari[tgl]);
 
     const ctx = document.getElementById('chart-penjualan').getContext('2d');
+
+    // Gradien warna area grafik
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(52, 152, 219, 0.4)');
+    gradient.addColorStop(1, 'rgba(52, 152, 219, 0)');
+
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -168,26 +174,45 @@
         datasets: [{
           label: 'Pendapatan Harian',
           data,
-          borderColor: '#3498db',
-          backgroundColor: 'rgba(52, 152, 219, 0.2)',
-          borderWidth: 2,
+          borderColor: '#2980b9',
+          backgroundColor: gradient,
+          pointBackgroundColor: '#3498db',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#3498db',
+          borderWidth: 3,
+          pointRadius: 5,
+          pointHoverRadius: 7,
           fill: true,
           tension: 0.4
         }]
       },
       options: {
         responsive: true,
+        animation: {
+          duration: 1500,
+          easing: 'easeOutQuart'
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
+            backgroundColor: '#2c3e50',
+            titleColor: '#ecf0f1',
+            bodyColor: '#ecf0f1',
             callbacks: {
               label: function(context) {
-                return 'Rp ' + context.raw.toLocaleString("id-ID");
+                const tanggal = context.label;
+                const nilai = context.raw;
+                const jumlahTx = transaksi.filter(tx => tx.date === tanggal).length;
+                return ` Rp ${nilai.toLocaleString("id-ID")} (${jumlahTx} transaksi)`;
               }
             }
           }
         },
         scales: {
+          x: {
+            grid: { display: false }
+          },
           y: {
             beginAtZero: true,
             ticks: {
@@ -209,6 +234,7 @@
         }
       });
     });
-  </script>
+</script>
 </body>
 </html>
+
